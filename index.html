@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeMCHost - Hébergeur Minecraft Gratuit</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        
+        .panel {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background-color: #ddd;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background-color: white;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .server-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .status-indicator {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .online {
+            background-color: var(--success);
+        }
+        
+        .offline {
+            background-color: var(--danger);
+        }
+        
+        .server-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-card {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .console {
+            background-color: var(--dark);
+            color: white;
+            font-family: monospace;
+            padding: 15px;
+            border-radius: 5px;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .console-line {
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        .players-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .player-card {
+            background-color: var(--light);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            background-color: #ddd;
+            display: block;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>FreeMCHost</h1>
+            <p>Hébergeur Minecraft Gratuit - Créez votre serveur en quelques clics</p>
+        </header>
+        
+        <div class="panel">
+            <div class="tabs">
+                <div class="tab active" onclick="openTab('create')">Créer un serveur</div>
+                <div class="tab" onclick="openTab('manage')">Gérer mon serveur</div>
+                <div class="tab" onclick="openTab('help')">Aide</div>
+            </div>
+            
+            <div id="create" class="tab-content active">
+                <h2>Créer un nouveau serveur Minecraft</h2>
+                <p>Remplissez le formulaire ci-dessous pour configurer votre serveur</p>
+                
+                <form id="serverForm">
+                    <div class="form-group">
+                        <label for="serverName">Nom du serveur</label>
+                        <input type="text" id="serverName" placeholder="Mon super serveur" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="serverType">Type de serveur</label>
+                        <select id="serverType" required>
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="vanilla">Vanilla</option>
+                            <option value="spigot">Spigot</option>
+                            <option value="paper">Paper</option>
+                            <option value="forge">Forge</option>
+                            <option value="fabric">Fabric</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="minecraftVersion">Version de Minecraft</label>
+                        <select id="minecraftVersion" required>
+                            <option value="">-- Sélectionnez --</option>
+                            <option value="1.20">1.20 (Dernière version)</option>
+                            <option value="1.19">1.19</option>
+                            <option value="1.18">1.18</option>
+                            <option value="1.17">1.17</option>
+                            <option value="1.16">1.16</option>
+                            <option value="1.15">1.15</option>
+                            <option value="1.14">1.14</option>
+                            <option value="1.13">1.13</option>
+                            <option value="1.12">1.12</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="authMode">Mode d'authentification</label>
+                        <select id="authMode" required>
+                            <option value="premium">Premium (Comptes Mojang/Microsoft)</option>
+                            <option value="cracked">Cracked (Tous les joueurs peuvent se connecter)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gameMode">Mode de jeu par défaut</label>
+                        <select id="gameMode" required>
+                            <option value="survival">Survie</option>
+                            <option value="creative">Créatif</option>
+                            <option value="adventure">Aventure</option>
+                            <option value="hardcore">Hardcore</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="maxPlayers">Nombre maximum de joueurs</label>
+                        <input type="number" id="maxPlayers" min="1" max="50" value="20" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="serverMap">Carte/Monde</label>
+                        <select id="serverMap" required>
+                            <option value="new">Nouveau monde aléatoire</option>
+                            <option value="flat">Monde plat</option>
+                            <option value="amplified">Monde amplifié</option>
+                            <option value="custom">Uploader une carte personnalisée</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ops">Opérateurs (admins, séparés par des virgules)</label>
+                        <input type="text" id="ops" placeholder="Pseudonyme1, Pseudonyme2">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="serverProperties">Options avancées (server.properties)</label>
+                        <textarea id="serverProperties" rows="5" placeholder="Ajoutez des configurations supplémentaires ici..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">Créer le serveur</button>
+                </form>
+            </div>
+            
+            <div id="manage" class="tab-content">
+                <h2>Gérer mon serveur</h2>
+                
+                <div class="server-status">
+                    <div class="status-indicator online"></div>
+                    <h3>Mon Super Serveur - En ligne</h3>
+                </div>
+                
+                <div class="server-info">
+                    <div class="info-card">
+                        <h4>Adresse du serveur</h4>
+                        <p>monsuper serveur.freemchost.net</p>
+                        <button class="btn">Copier l'adresse</button>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h4>Statistiques</h4>
+                        <p>Joueurs: 3/20</p>
+                        <p>Version: 1.20 (Paper)</p>
+                        <p>Uptime: 2h 45m</p>
+                    </div>
+                    
+                    <div class="info-card">
+                        <h4>Actions rapides</h4>
+                        <button class="btn">Redémarrer</button>
+                        <button class="btn btn-danger">Arrêter</button>
+                    </div>
+                </div>
+                
+                <h3>Console du serveur</h3>
+                <div class="console" id="serverConsole">
+                    <p class="console-line">[12:34] [Server thread/INFO]: Starting minecraft server version 1.20</p>
+                    <p class="console-line">[12:34] [Server thread/INFO]: Loading properties</p>
+                    <p class="console-line">[12:34] [Server thread/INFO]: Default game type: SURVIVAL</p>
+                    <p class="console-line">[12:35] [Server thread/INFO]: Preparing level "world"</p>
+                    <p class="console-line">[12:35] [Server thread/INFO]: Preparing spawn area: 10%</p>
+                    <p class="console-line">[12:36] [Server thread/INFO]: Preparing spawn area: 56%</p>
+                    <p class="console-line">[12:36] [Server thread/INFO]: Preparing spawn area: 100%</p>
+                    <p class="console-line">[12:36] [Server thread/INFO]: Done (12.345s)! For help, type "help"</p>
+                    <p class="console-line">[12:40] [User Authenticator #1/INFO]: UUID of player Steve is abc123</p>
+                    <p class="console-line">[12:40] [Server thread/INFO]: Steve joined the game</p>
+                    <p class="console-line">[12:42] [Server thread/INFO]: Steve issued server command: /time set day</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="consoleCommand">Commande</label>
+                    <div style="display: flex;">
+                        <input type="text" id="consoleCommand" placeholder="Entrez une commande...">
+                        <button class="btn" style="margin-left: 10px;">Envoyer</button>
+                    </div>
+                </div>
+                
+                <h3>Joueurs connectés</h3>
+                <div class="players-list">
+                    <div class="player-card">
+                        <div class="player-avatar"></div>
+                        <p>Steve</p>
+                        <p>OP</p>
+                    </div>
+                    <div class="player-card">
+                        <div class="player-avatar"></div>
+                        <p>Alex</p>
+                        <p>Joueur</p>
+                    </div>
+                    <div class="player-card">
+                        <div class="player-avatar"></div>
+                        <p>Notch</p>
+                        <p>Joueur</p>
+                    </div>
+                </div>
+                
+                <h3>Paramètres du serveur</h3>
+                <button class="btn">Modifier les paramètres</button>
+                <button class="btn">Sauvegarder le monde</button>
+                <button class="btn btn-danger">Supprimer le serveur</button>
+            </div>
+            
+            <div id="help" class="tab-content">
+                <h2>Aide et support</h2>
+                
+                <h3>FAQ</h3>
+                <div class="panel">
+                    <h4>Comment créer un serveur?</h4>
+                    <p>Remplissez simplement le formulaire dans l'onglet "Créer un serveur" et cliquez sur le bouton de création. Votre serveur sera prêt en quelques minutes.</p>
+                    
+                    <h4>Mon serveur est-il vraiment gratuit?</h4>
+                    <p>Oui, notre service est entièrement gratuit. Nous offrons des serveurs basiques sans frais. Des options premium sont disponibles pour plus de performances.</p>
+                    
+                    <h4>Combien de joueurs peuvent rejoindre mon serveur?</h4>
+                    <p>La limite par défaut est de 20 joueurs, mais vous pouvez l'ajuster dans les paramètres du serveur.</p>
+                    
+                    <h4>Puis-je utiliser des plugins/mods?</h4>
+                    <p>Oui, vous pouvez installer des plugins si vous choisissez Spigot ou Paper comme type de serveur. Pour les mods, sélectionnez Forge ou Fabric.</p>
+                </div>
+                
+                <h3>Contactez-nous</h3>
+                <div class="panel">
+                    <p>Si vous avez besoin d'aide supplémentaire, vous pouvez nous contacter à:</p>
+                    <p>Email: support@freemchost.net</p>
+                    <p>Discord: discord.gg/freemchost</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>FreeMCHost n'est pas affilié à Mojang ou Microsoft. Tous les droits sont réservés à leurs propriétaires respectifs.</p>
+            <p>© 2023 FreeMCHost - Hébergeur Minecraft Gratuit</p>
+        </footer>
+    </div>
+    
+    <script>
+        function openTab(tabId) {
+            // Cache tous les contenus d'onglets
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            // Désactive tous les onglets
+            const tabs = document.getElementsByClassName('tab');
+            for (let i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            // Active l'onglet sélectionné et son contenu
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Gestion du formulaire
+        document.getElementById('serverForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Récupération des valeurs du formulaire
+            const serverName = document.getElementById('serverName').value;
+            const serverType = document.getElementById('serverType').value;
+            const minecraftVersion = document.getElementById('minecraftVersion').value;
+            const authMode = document.getElementById('authMode').value;
+            const gameMode = document.getElementById('gameMode').value;
+            const maxPlayers = document.getElementById('maxPlayers').value;
+            const serverMap = document.getElementById('serverMap').value;
+            const ops = document.getElementById('ops').value;
+            
+            // Simulation de création de serveur
+            alert(`Serveur "${serverName}" en cours de création!\n\nConfiguration:\n- Type: ${serverType}\n- Version: ${minecraftVersion}\n- Authentification: ${authMode}\n- Mode de jeu: ${gameMode}\n- Joueurs max: ${maxPlayers}\n- Carte: ${serverMap}\n\nCette interface est une démonstration. Pour un véritable hébergeur, un backend serait nécessaire.`);
+            
+            // Basculer vers l'onglet de gestion (simulation)
+            openTab('manage');
+            
+            // Mettre à jour le nom du serveur dans l'onglet de gestion
+            document.querySelector('#manage .server-status h3').textContent = `${serverName} - En ligne`;
+        });
+        
+        // Simulation de commande console
+        document.querySelector('#manage button').addEventListener('click', function() {
+            const command = document.getElementById('consoleCommand').value;
+            if (command.trim() !== '') {
+                const consoleElement = document.getElementById('serverConsole');
+                const newLine = document.createElement('p');
+                newLine.className = 'console-line';
+                newLine.textContent = `[${new Date().getHours()}:${new Date().getMinutes()}] [Server thread/INFO]: ${command}`;
+                consoleElement.appendChild(newLine);
+                consoleElement.scrollTop = consoleElement.scrollHeight;
+                document.getElementById('consoleCommand').value = '';
+            }
+        });
+    </script>
+</body>
+</html>
